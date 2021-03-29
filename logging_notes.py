@@ -30,10 +30,6 @@
     Подробнее: https://docs.python.org/3/library/logging.html#logrecord-attributes
 """
 
-
-
-
-
 import logging
 
 logging.basicConfig(
@@ -54,6 +50,7 @@ try:
 except Exception as e:
     logging.exception("Exception occurred v2")
 
+# Этот вариант я думаю лучше не использовать
 try:
     c = a / b
 except Exception as e:

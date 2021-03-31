@@ -33,7 +33,7 @@ logging.critical('This is a critical message')
 
 # Конфигурация root логгера
 """
-Для настройки root логгера можно использовать метод basicConfig(), его параметры:
+Для настройки root логгера используется метод basicConfig(), его параметры:
     level: Уровень обрабатываемых сообщений
     filename: Путь к файлу лога. То есть с каким файлом работает логгер. Если путь не указан,
       то лог выводится в консоль.
@@ -51,6 +51,7 @@ logging.critical('This is a critical message')
     Подробнее: https://docs.python.org/3/library/logging.html#logrecord-attributes
 
     !!! метод basicConfig можно вызвать единожды, дальнешие вызовы будут игнорироваться !!!
+    но это не точно
 """
 
 logging.basicConfig(
@@ -58,10 +59,11 @@ logging.basicConfig(
     format='(%(name)s) %(asctime)s: <%(levelname)s> - %(message)s'
     # Так как аргумент filename не указан, будет использоваться режим вывода по умолчанию - в консоль.
 )
+
+# Обработчики ошибок и логгирование
 a = 5
 b = 0
 
-# Обработчики ошибок и логгирование
 # С использованием спец. флага exc_info
 """
 Флаг exc_info в значении True всегда выводит traceback в сообщении

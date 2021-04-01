@@ -58,7 +58,51 @@
 #
 #       +-- 1_14 ValueError — тип данных правильный, но значение не валидно
 
-# TODO После краткого описания ошибок стоит составить список FAQ:
-#   Какие типы ошибок нужно вызывать и обрабатывать в определенных ситуациях
+
+
+
+# схема конструкции try ... except
+# try:
+#     код, который необходимо выполнить
+# except:
+#     обработка исключения
+# else:
+#     код, который выполнится если ошибок не произошло
+# finally:
+#     код, выполняющийся вне зависимости были ошибки или нет
+
+# Как НЕ НАДО использовать try ... except
+try:
+    do_something()
+except:
+    pass
+
+# Как НЕ НАДО использовать try ... except вариант 2
+try:
+    do_something()
+except Exception as e:
+    print('something going wrong')
+# Такая конструкция спрячет ВСЕ остальные варианты ошибок
+
+# Если всё же хочется охватывать все ошибки через Exception, то только так:
+import logging
+
+def get_number():
+    return int('foo')
+try:
+    x = get_number()
+except Exception as ex:
+    logging.exception('Caught an error')
+# Через логирование, с полной записью traceback в лог-файл
+print('Дальше всё работает')
+# Вывод:
+# ERROR:root:Caught an error
+# Traceback (most recent call last):
+#   File "c:\ilya\programming\python\reps\python_notes\exceptions_notes.py", line 93, in <module>  
+#     x = get_number()
+#   File "c:\ilya\programming\python\reps\python_notes\exceptions_notes.py", line 91, in get_number
+#     return int('foo')
+# ValueError: invalid literal for int() with base 10: 'foo'
+# Дальше всё работает 
 
 # TODO Расписать примеры того, как правильно создавать свои классы ошибок

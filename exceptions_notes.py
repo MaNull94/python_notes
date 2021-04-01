@@ -105,4 +105,44 @@ print('Дальше всё работает')
 # ValueError: invalid literal for int() with base 10: 'foo'
 # Дальше всё работает 
 
-# TODO Расписать примеры того, как правильно создавать свои классы ошибок
+
+# как создавать свои классы исключений
+# Правила:
+#   1. Наследоваться можно только от класса Exception
+#   2. Если необходима целая иерархия собственных исключений, то базовый класс наследуется от Exception,
+#       а далее классы наследуются от базового.
+
+# Исключение без параметров
+class MyCustomException(Exception):
+    pass
+
+
+try:
+    some_val = 2 + 2
+    if some_val == 4:
+        # raise - оператор вызова исключения
+        raise MyCustomException("custom message text from raise")
+except MyCustomException:
+    print('MyCustomException is called')
+# Вывод:
+# MyCustomException is called
+
+
+# Хороший пример собственных исключений
+# Источник: https://stackoverflow.com/a/60465422
+# To define your own exceptions correctly, there are a few best practices that you should follow:
+
+# Define a base class inheriting from Exception. This will allow to easily catch any exceptions related to the project:
+class MyProjectError(Exception):
+    """A base class for MyProject exceptions."""
+
+# To add support for extra argument(s) to a custom exception, define a custom __init__() method with a
+#   variable number of arguments. Call the base class's __init__(), passing any positional
+#   arguments to it (remember that BaseException/Exception expect any number of positional arguments):
+class CustomError(MyProjectError):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args)
+        self.foo = kwargs.get('foo')
+
+# To raise such exception with an extra argument you can use:
+raise CustomError('Something bad happened', foo='foo')

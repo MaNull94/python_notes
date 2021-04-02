@@ -86,6 +86,7 @@ except Exception as e:
 
 # Если всё же хочется охватывать все ошибки через Exception, то только так:
 import logging
+logging.basicConfig(filename='exc.log')
 
 def get_number():
     return int('foo')
@@ -104,6 +105,46 @@ print('Дальше всё работает')
 #     return int('foo')
 # ValueError: invalid literal for int() with base 10: 'foo'
 # Дальше всё работает 
+
+print('\n')
+# Связанные исключения
+# с использованием конструкции raise <exc> from <exc>
+"""
+Эта конструкция изменяет контекст вывода связанных ошибок. Пример наглядно это показывает
+"""
+try:
+    try:
+        print(1 / 0)
+    except Exception as exc:
+        raise RuntimeError("Something bad happened") from exc
+except:
+    logging.exception('chaining exceptions WITH raise ... from')
+
+print('without ... from exc')
+try:
+    try:
+        print(1 / 0)
+    except Exception as exc:
+        raise RuntimeError("Something bad happened")
+except:
+    logging.exception('chaining exceptions WITHOUT raise ... from')
+
+# Отличие между вызовами использования raise ... с использованием from ... и без
+"""
+Запись в лог при использовании raise <exc1> from <exc2>
+<сообщение переданное как аргумент логирования>
+<traceback от exc1>
+!!! The above exception was the direct cause of the following exception: !!!
+(Перевод: Вышеупомянутое исключение явилось прямой причиной следующего исключения:)
+<traceback от exc2>
+
+Запись в лог при использовании просто raise <exc>
+<сообщение переданное как аргумент логирования>
+<traceback от exc1>
+!!! During handling of the above exception, another exception occurred: !!!
+(Перевод: Во время обработки вышеуказанного исключения произошло другое исключение:)
+<traceback от exc2>
+"""
 
 
 # как создавать свои классы исключений
@@ -131,7 +172,6 @@ except MyCustomException:
 # Хороший пример собственных исключений
 # Источник: https://stackoverflow.com/a/60465422
 # To define your own exceptions correctly, there are a few best practices that you should follow:
-
 # Define a base class inheriting from Exception. This will allow to easily catch any exceptions related to the project:
 class MyProjectError(Exception):
     """A base class for MyProject exceptions."""
@@ -143,6 +183,5 @@ class CustomError(MyProjectError):
     def __init__(self, *args, **kwargs):
         super().__init__(*args)
         self.foo = kwargs.get('foo')
-
 # To raise such exception with an extra argument you can use:
 raise CustomError('Something bad happened', foo='foo')

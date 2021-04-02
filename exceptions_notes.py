@@ -194,8 +194,8 @@ except Exception:
 # 4_ Как создавать свои классы исключений
 # 4_1 Правила:
 #   1. Наследоваться можно только от класса Exception
-#   2. Если необходима целая иерархия собственных исключений, то базовый класс наследуется от Exception,
-#       а далее классы наследуются от базового.
+#   2. Если необходима целая иерархия собственных исключений, то базовый класс
+#       наследуется от Exception, а далее классы наследуются от базового.
 
 # 4_2 Исключение без параметров
 class MyCustomException(Exception):
@@ -216,7 +216,8 @@ except MyCustomException:
 # 4_3 Хороший пример иерархии собственных исключений
 # Источник: https://stackoverflow.com/a/60465422
 # To define your own exceptions correctly, there are a few best practices that you should follow:
-# Define a base class inheriting from Exception. This will allow to easily catch any exceptions related to the project:
+# Define a base class inheriting from Exception. This will allow to easily catch any
+#   exceptions related to the project:
 class MyProjectError(Exception):
     """A base class for MyProject exceptions."""
 # To add support for extra argument(s) to a custom exception, define a custom __init__() method with a

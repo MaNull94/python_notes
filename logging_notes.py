@@ -1,8 +1,32 @@
 # Источники:
     # Конспект статьи: https://realpython.com/python-logging
 
+
+# Содержание:
+# 1_ Уровни сообщений в логгере:
+
+# 2_ Илюстрация уровней логгирования
+
+# 3_ Конфигурация root логгера
+
+# 4_ Обработчики ошибок и логгирование
+    # 4_1 С использованием спец. флага exc_info
+    # 4_2 Использование спец. метода exception
+
+# 5_ Кастомные логгеры
+    # 5_1 Создаём кастомный логгер
+    # 5_2 Создаём логгер с именем модуля, в котором он находится
+    # 5_3 Проверяем обработку лога сформированного в другом файле
+
+# 6_ Конфигурируем кастомный логгер
+    # 6_1 Введение в основные сущности библиотеки logging
+    # 6_2 Пример конфигурации кастомного логгера
+
+
+
+
 # TODO Расписать отличие root логгера и созданного через logger.getLogger(), например конфигурация и т.д.
-# Уровни сообщений в логгере:
+# 1_ Уровни сообщений в логгере:
 """
 - CRITICAL
 - ERROR
@@ -14,7 +38,9 @@
 Всё что находится ниже указанного уровня, обрабатываться логгером не будет.
 """
 
-# Илюстрация уровней логгирования
+
+
+# 2_ Илюстрация уровней логгирования
 import logging
 
 logging.debug('This is a debug message')
@@ -31,7 +57,9 @@ logging.critical('This is a critical message')
 #   стоящие уровнем ниже чем WARNING
 
 
-# Конфигурация root логгера
+
+
+# 3_ Конфигурация root логгера
 """
 Для настройки root логгера используется метод basicConfig(), его параметры:
     level: Уровень обрабатываемых сообщений
@@ -60,11 +88,15 @@ logging.basicConfig(
     # Так как аргумент filename не указан, будет использоваться режим вывода по умолчанию - в консоль.
 )
 
-# Обработчики ошибок и логгирование
+
+
+
+# 4_ Обработчики ошибок и логгирование
 a = 5
 b = 0
 
-# С использованием спец. флага exc_info
+
+# 4_1 С использованием спец. флага exc_info
 """
 Флаг exc_info в значении True всегда выводит traceback в сообщении
 """
@@ -81,7 +113,7 @@ except Exception as e:
 # ZeroDivisionError: division by zero
 
 
-# Использование спец. метода exception
+# 4_2 Использование спец. метода exception
 """
 Если вкратце, то logging.exception() == logging.error(exc_info=True)
 По сути это синтаксический сахар, делающий код более лаконичным
@@ -100,8 +132,10 @@ except Exception as e:
 # ZeroDivisionError: division by zero
 
 
-# кастомные логгеры
-# создаём кастомный логгер
+
+
+# 5_ Кастомные логгеры
+# 5_1 Создаём кастомный логгер
 my_logger = logging.getLogger('my_custom_logger')
 try:
     print('\n\nException logging custom')
@@ -116,14 +150,16 @@ except Exception as e:
 #     c = a / b
 # ZeroDivisionError: division by zero
 
+
 print()
-# создаём логгер с именем модуля, в котором он находится
+# 5_2 Создаём логгер с именем модуля, в котором он находится
 test_logger = logging.getLogger(__name__)
 test_logger.info('Hello from module logger')
 # Вывод:
 # (__main__) 2021-03-30 21:44:30,174: <INFO> - Hello from module logger
 
-# проверяем обработку лога сформированного в другом файле
+
+# 5_3 Проверяем обработку лога сформированного в другом файле
 """
 Код файла logging_test_submodule:
     from logging import getLogger
@@ -141,8 +177,10 @@ logging_test_submodule.say_hi()
 # (logging_test_submodule) 2021-03-30 21:44:30,175: <INFO> - Hi from logging_test_submodule
 
 
-# Конфигурируем кастомный логгер
-# Введение в основные сущности библиотеки logging
+
+
+# 6_ Конфигурируем кастомный логгер
+# 6_1 Введение в основные сущности библиотеки logging
 """
 Logger: Непосредственно сам логгер, через экземпляры логгера как раз таки вызываются методы info(), warning(), critical() и другие
 
@@ -157,21 +195,22 @@ Handler: Отправляют записи лога в указанную точ
 Formatter: Ну тут всё говорит за себя. Класс форматирования лога перед отправкой в точку вывода
 """
 
-# пример конфигурации кастомного логгера
+
+# 6_2 Пример конфигурации кастомного логгера
 logger = logging.getLogger('some_custom_logger')
-# Create handlers
+# Создаём обработчики логов
 console_handler = logging.StreamHandler()
 file_handler = logging.FileHandler('file.log')
 console_handler.setLevel(logging.WARNING)
 file_handler.setLevel(logging.ERROR)
 
-# Create formatters and add it to handlers
+# Создаём строки форматирования и связываем с обработчиками
 console_log_format = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
 file_log_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 console_handler.setFormatter(console_log_format)
 file_handler.setFormatter(file_log_format)
 
-# Add handlers to the logger
+# Добавляем обработчики в логгер
 logger.addHandler(console_handler)
 logger.addHandler(file_handler)
 

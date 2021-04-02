@@ -2,7 +2,31 @@
 Заметки по обработчикам ошибок
 """
 
-# Иерархия ошибок (неполная)
+
+# Содержание:
+# 1_ Иерархия ошибок (неполная)
+
+# 2_ схема конструкции try ... except
+    # 2_1 Примеры использования try ... except
+        # 2_1_1 Как НЕ НАДО использовать try ... except
+        # 2_1_2 Как НЕ НАДО использовать try ... except вариант 2
+        # 2_1_3 Если всё же хочется охватывать все ошибки через Exception, то только так:
+
+# 3_ Связанные исключения
+    # 3_1 С использованием конструкции raise <exc> from <exc>
+    # 3_2 Без использования конструкции
+    # 3_3 Отличие между вызовами использования raise ... с использованием from ... и без
+    # 3_4 Хороший пример использования raise ... from ...
+
+# 4_ Как создавать свои классы исключений
+    # 4_1 Правила:
+    # 4_2 Исключение без параметров
+    # 4_3 Хороший пример иерархии собственных исключений
+
+
+
+
+# 1_ Иерархия ошибок (неполная)
 # Источник: https://docs.python.org/3/library/exceptions.html#exception-hierarchy
 # символ "—" - alt+0151
 # BaseException
@@ -61,7 +85,7 @@
 
 
 
-# схема конструкции try ... except
+# 2_ схема конструкции try ... except
 # try:
 #     код, который необходимо выполнить
 # except:
@@ -71,23 +95,33 @@
 # finally:
 #     код, выполняющийся вне зависимости были ошибки или нет
 
-# Как НЕ НАДО использовать try ... except
+
+# настройки перед практическими примерами
+from datetime import datetime
+import logging
+logging.basicConfig(filename='exc.log', level=logging.INFO)
+logging.info(f'{datetime.now()}')
+
+
+
+
+# 2_1 Примеры использования try ... except
+# 2_1_1 Как НЕ НАДО использовать try ... except
 try:
     do_something()
 except:
     pass
 
-# Как НЕ НАДО использовать try ... except вариант 2
+
+# 2_1_2 Как НЕ НАДО использовать try ... except вариант 2
 try:
     do_something()
 except Exception as e:
     print('something going wrong')
 # Такая конструкция спрячет ВСЕ остальные варианты ошибок
 
-# Если всё же хочется охватывать все ошибки через Exception, то только так:
-import logging
-logging.basicConfig(filename='exc.log')
 
+# 2_1_3 Если всё же хочется охватывать все ошибки через Exception, то только так:
 def get_number():
     return int('foo')
 try:
@@ -106,30 +140,35 @@ print('Дальше всё работает')
 # ValueError: invalid literal for int() with base 10: 'foo'
 # Дальше всё работает 
 
+
+
+
 print('\n')
-# Связанные исключения
-# с использованием конструкции raise <exc> from <exc>
+# 3_ Связанные исключения
+# 3_1 С использованием конструкции raise <exc> from <exc>
 """
-Эта конструкция изменяет контекст вывода связанных ошибок. Пример наглядно это показывает
+Эта конструкция изменяет контекст вывода связанных ошибок
 """
 try:
     try:
         print(1 / 0)
     except Exception as exc:
         raise RuntimeError("Something bad happened") from exc
-except:
+except Exception:
     logging.exception('chaining exceptions WITH raise ... from')
 
-print('without ... from exc')
+
+# 3_2 Без использования конструкции
 try:
     try:
         print(1 / 0)
     except Exception as exc:
         raise RuntimeError("Something bad happened")
-except:
+except Exception:
     logging.exception('chaining exceptions WITHOUT raise ... from')
 
-# Отличие между вызовами использования raise ... с использованием from ... и без
+
+# 3_3 Отличие между вызовами использования raise ... с использованием from ... и без
 """
 Запись в лог при использовании raise <exc1> from <exc2>
 <сообщение переданное как аргумент логирования>
@@ -144,16 +183,21 @@ except:
 !!! During handling of the above exception, another exception occurred: !!!
 (Перевод: Во время обработки вышеуказанного исключения произошло другое исключение:)
 <traceback от exc2>
+
+Вывод: Такой контекст между двумя записями об ошибке явно указывает что ошибки связаны между собой
 """
 
+# 3_4 Хороший пример использования raise ... from ...
+# https://stackoverflow.com/questions/24752395/python-raise-from-usage#comment38446019_24752607
 
-# как создавать свои классы исключений
-# Правила:
+
+# 4_ Как создавать свои классы исключений
+# 4_1 Правила:
 #   1. Наследоваться можно только от класса Exception
 #   2. Если необходима целая иерархия собственных исключений, то базовый класс наследуется от Exception,
 #       а далее классы наследуются от базового.
 
-# Исключение без параметров
+# 4_2 Исключение без параметров
 class MyCustomException(Exception):
     pass
 
@@ -169,13 +213,12 @@ except MyCustomException:
 # MyCustomException is called
 
 
-# Хороший пример собственных исключений
+# 4_3 Хороший пример иерархии собственных исключений
 # Источник: https://stackoverflow.com/a/60465422
 # To define your own exceptions correctly, there are a few best practices that you should follow:
 # Define a base class inheriting from Exception. This will allow to easily catch any exceptions related to the project:
 class MyProjectError(Exception):
     """A base class for MyProject exceptions."""
-
 # To add support for extra argument(s) to a custom exception, define a custom __init__() method with a
 #   variable number of arguments. Call the base class's __init__(), passing any positional
 #   arguments to it (remember that BaseException/Exception expect any number of positional arguments):
@@ -185,3 +228,5 @@ class CustomError(MyProjectError):
         self.foo = kwargs.get('foo')
 # To raise such exception with an extra argument you can use:
 raise CustomError('Something bad happened', foo='foo')
+
+

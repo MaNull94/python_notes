@@ -97,7 +97,6 @@
 
 
 # настройки перед практическими примерами
-from datetime import datetime
 import logging
 logging.basicConfig(
     level=logging.INFO,
@@ -293,3 +292,5 @@ finally:
 """
 Уровень 4 не выполнился. Так как ошибка произошла на уровне 3
 """
+
+

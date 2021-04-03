@@ -23,7 +23,7 @@
     # 4_2 Исключение без параметров
     # 4_3 Хороший пример иерархии собственных исключений
 
-
+# 5_ Использование вложенных блоков try и поиск обработчика исключений
 
 
 # 1_ Иерархия ошибок (неполная)
@@ -247,20 +247,26 @@ class CustomError(MyProjectError):
 
 
 
-# Использование вложенных блоков try и поиск обработчика исключений
+# 5_ Использование вложенных блоков try и поиск обработчика исключений
 """
 При возникновении исключения интерпретатор начнет поиск обработчика в собственном
   блоке try (при наличии), а так же в блоках try выше по вложенности. Пока не дойдет до
   стандартного, в котором просто произойдет raise исключения.
 """
-try:
-    1 + 1
-    try:
-        2 + 2
-        try:
+try: # level 1
+    try: # level 2
+        try: # level 3
             3 / 0
+            try: # level 4
+                logging.info('do something in 4th lvl')
+            except:
+                pass
+            else:
+                logging.info('4th lvl works good!')
+            finally:
+                logging.info('4th level is ended')
         except KeyError:
-            logging.exception('3rd lvl OOPS')
+            pass
         finally:
             logging.info('3rd level is ended')
     except IndexError:
@@ -269,8 +275,11 @@ try:
         logging.info('2nd level is ended')
 except ZeroDivisionError:
     logging.exception('someone tried divide by zero')
+else:
+    logging.info('log from 1st lvl else')
 finally:
     logging.info('1st level is ended')
+# Вывод:
 # (root) 2021-04-03 11:25:58,556: <INFO> - 3rd level is ended
 # (root) 2021-04-03 11:25:58,556: <INFO> - 2nd level is ended
 # (root) 2021-04-03 11:25:58,556: <ERROR> - someone tried divide by zero
@@ -280,3 +289,7 @@ finally:
 #     3 / 0
 # ZeroDivisionError: division by zero
 # (root) 2021-04-03 11:25:58,556: <INFO> - 1st level is ended
+
+"""
+Уровень 4 не выполнился. Так как ошибка произошла на уровне 3
+"""

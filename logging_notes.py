@@ -43,6 +43,19 @@
 # 2_ Илюстрация уровней логгирования
 import logging
 
+# Базовый конфиг нужно настраивать сразу же. Если перед ним вызвать logging.info() или похожий,
+#   то этот метод запустит basicConfig() с параметрами по умолчанию. Пользовательский же
+#   basicConfig будет проигнорирован.
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='\n\n(%(name)s) %(asctime)s: <%(levelname)s> - %(message)s'
+    # Так как аргумент filename не указан, будет использоваться режим вывода по умолчанию - в консоль.
+)
+
+# 2_1 пример работы при стандартных параметрах
+# Предположим что настройка basicConfig не производилась. Вызываем методы логирования
 logging.debug('This is a debug message')
 logging.info('This is an info message')
 logging.warning('This is a warning message')
@@ -79,16 +92,7 @@ logging.critical('This is a critical message')
     Подробнее: https://docs.python.org/3/library/logging.html#logrecord-attributes
 
     !!! метод basicConfig можно вызвать единожды, дальнешие вызовы будут игнорироваться !!!
-    но это не точно
 """
-
-logging.basicConfig(
-    level=logging.ERROR,
-    format='(%(name)s) %(asctime)s: <%(levelname)s> - %(message)s'
-    # Так как аргумент filename не указан, будет использоваться режим вывода по умолчанию - в консоль.
-)
-
-
 
 
 # 4_ Обработчики ошибок и логгирование
@@ -182,7 +186,8 @@ logging_test_submodule.say_hi()
 # 6_ Конфигурируем кастомный логгер
 # 6_1 Введение в основные сущности библиотеки logging
 """
-Logger: Непосредственно сам логгер, через экземпляры логгера как раз таки вызываются методы info(), warning(), critical() и другие
+Logger: Непосредственно сам логгер, через экземпляры логгера как раз таки вызываются
+  методы info(), warning(), critical() и другие
 
 LogRecord: Запись лога, экземпляры этого класса хранят в себе всю информацию, которую указали для логирования
 
@@ -201,6 +206,7 @@ logger = logging.getLogger('some_custom_logger')
 # Создаём обработчики логов
 console_handler = logging.StreamHandler()
 file_handler = logging.FileHandler('file.log')
+# Указываем разные уровни логгирования для каждого обработчика
 console_handler.setLevel(logging.WARNING)
 file_handler.setLevel(logging.ERROR)
 

@@ -11,6 +11,7 @@
         # 2_1_1 Как НЕ НАДО использовать try ... except
         # 2_1_2 Как НЕ НАДО использовать try ... except вариант 2
         # 2_1_3 Если всё же хочется охватывать все ошибки через Exception, то только так:
+        # 2_1_4 Перехват исключения и дальнейшая отправка на уровень выше
 
 # 3_ Связанные исключения
     # 3_1 С использованием конструкции raise <exc> from <exc>
@@ -141,6 +142,16 @@ print('Дальше всё работает')
 # Дальше всё работает 
 
 
+# 2_1_4 Перехват исключения и дальнейшая отправка на уровень выше
+try:
+    try:
+        raise NameError('HiThere')
+    except NameError:
+        print('An exception flew by!')
+        raise
+except Exception as e:
+    print(e)
+    #HiThere
 
 
 print('\n')
@@ -205,7 +216,6 @@ class MyCustomException(Exception):
 try:
     some_val = 2 + 2
     if some_val == 4:
-        # raise - оператор вызова исключения
         raise MyCustomException("custom message text from raise")
 except MyCustomException:
     print('MyCustomException is called')
@@ -228,6 +238,8 @@ class CustomError(MyProjectError):
         super().__init__(*args)
         self.foo = kwargs.get('foo')
 # To raise such exception with an extra argument you can use:
-raise CustomError('Something bad happened', foo='foo')
+# raise CustomError('Something bad happened', foo='foo')
+
+
 
 

@@ -11,19 +11,20 @@
         # 2_1_1 Как НЕ НАДО использовать try ... except
         # 2_1_2 Как НЕ НАДО использовать try ... except вариант 2
         # 2_1_3 Если всё же хочется охватывать все ошибки через Exception, то только так:
+        # 2_1_4 Перехват исключения и дальнейшая отправка на уровень выше
 
 # 3_ Связанные исключения
     # 3_1 С использованием конструкции raise <exc> from <exc>
     # 3_2 Без использования конструкции
     # 3_3 Отличие между вызовами использования raise ... с использованием from ... и без
-    # 3_4 Хорошая иллюстрация как использовать raise ... from ...
+    # 3_4 Хороший пример использования raise ... from ...
 
 # 4_ Как создавать свои классы исключений
     # 4_1 Правила:
     # 4_2 Исключение без параметров
     # 4_3 Хороший пример иерархии собственных исключений
 
-# 5_ Использование вложенных блоков try и поиск обработчика исключений
+
 
 
 # 1_ Иерархия ошибок (неполная)
@@ -43,7 +44,7 @@
 #       +-- 1_3 ArithmeticError — базовый класс арифметических ошибок
 #       |    +-- 1_3_1 FloatingPointError — Not currently used. Нуок О_о
 #       |    +-- 1_3_2 OverflowError — ошибка переполнения. Редко используют если integer вышел за
-                        # рекомендованый диапазон.
+                        # рекомендованный диапазон.
                     # Чаще для integer используют MemoryError
 #       |    +-- 1_3_3 ZeroDivisionError — если второе число при делении (делитель) равен нулю
 #
@@ -52,7 +53,7 @@
 #       +-- 1_5 AttributeError — ошибка определения или присвоения значения атрибуту. Если эти
                     # операции не поддерживаются объектом в принципе, вызывается TypeError
 #
-#       +-- 1_6 EOFError — EndOfFile. Если в input() был передан только символ конца строки,
+#       +-- 1_6 EOFError — EndOfFile. если в input() был передан только символ конца строки,
                     # то есть пустая строка.
 #
 #       +-- 1_7 ImportError — import имеет проблемы при импорте модуля. Или from ... import не
@@ -60,7 +61,7 @@
 #       |    +-- 1_7_1 ModuleNotFoundError — при import модуль не найден
 #
 #       +-- 1_8 LookupError — базовый класс ошибки при поиске элемента в последовательности
-#       |    +-- 1_8_1 IndexError — выход индекса из диапазона. Если тип индекса не int,
+#       |    +-- 1_8_1 IndexError — выход индекса из диапазона. если тип индекса не int,
                         # вызывается TypeError
 #       |    +-- 1_8_2 KeyError — ключ в словаре не найден
 #
@@ -72,13 +73,13 @@
 #
 #       +-- 1_11 RuntimeError — ошибка, классификацию которой не определили. Из разряда: тут
                     # ошибка братан. И всё. Дальше сам разбирайся.
-                # Я думаю это самая "любимая" ошибка программистов на питоне
+                # я думаю это самая "любимая" ошибка программистов на питоне
 #       |    +-- 1_11_1 NotImplementedError — используется при работе с абстрактными методами
 #                   https://docs.python.org/3/library/exceptions.html#NotImplementedError
 #       |    +-- 1_11_2 RecursionError — первышение глубины рекурсии
 #       +-- 1_12 SystemError — если возникает ошибка, то стоит отправить данные разработчикам Python.
 #
-#       +-- 1_13 TypeError — ошибка работы типов. При попытке сложить int и str например
+#       +-- 1_13 TypeError — ошибка работы типов. при попытке сложить int и str например
 #
 #       +-- 1_14 ValueError — тип данных правильный, но значение не валидно
 
@@ -97,12 +98,12 @@
 
 
 # настройки перед практическими примерами
+from datetime import datetime
 import logging
-logging.basicConfig(
-    level=logging.INFO,
-    filename='exc.log',
-    format='\n\n(%(name)s) %(asctime)s: <%(levelname)s> - %(message)s'
-)
+logging.basicConfig(filename='exc.log', level=logging.INFO)
+logging.info(f'{datetime.now()}')
+
+
 
 
 # 2_1 Примеры использования try ... except
@@ -133,14 +134,24 @@ print('Дальше всё работает')
 # Вывод:
 # ERROR:root:Caught an error
 # Traceback (most recent call last):
-#   File "c:\ilya\programming\python\reps\python_notes\exceptions_notes.py", line 93, in <module>  
+#   File "c:\ilya\programming\python\reps\python_notes\exceptions_notes.py", line 93, in <module>
 #     x = get_number()
 #   File "c:\ilya\programming\python\reps\python_notes\exceptions_notes.py", line 91, in get_number
 #     return int('foo')
 # ValueError: invalid literal for int() with base 10: 'foo'
-# Дальше всё работает 
+# Дальше всё работает
 
 
+# 2_1_4 Перехват исключения и дальнейшая отправка на уровень выше
+try:
+    try:
+        raise NameError('HiThere')
+    except NameError:
+        print('An exception flew by!')
+        raise
+except Exception as e:
+    print(e)
+    #HiThere
 
 
 print('\n')
@@ -184,23 +195,11 @@ except Exception:
 (Перевод: Во время обработки вышеуказанного исключения произошло другое исключение:)
 <traceback от exc2>
 
-Вывод: При использовании raise from контекст между двумя записями об ошибке явно указывает что
-  ошибки СВЯЗАНЫ между собой
+Вывод: Такой контекст между двумя записями об ошибке явно указывает что ошибки связаны между собой
 """
 
-# 3_4 Хорошая иллюстрация как использовать raise ... from ...
-# Источник:
+# 3_4 Хороший пример использования raise ... from ...
 # https://stackoverflow.com/questions/24752395/python-raise-from-usage#comment38446019_24752607
-
-# Lets say your database API supports opening databases from various sources, including the web and disk.
-# Your API will always raise a DatabaseError if opening the database fails. But if the failure is
-#   the result of a IOError because a file failed to open or a
-#   HTTPError because a URL failed to work then that is context you want to include explicitly,
-#   so the developer using the API can debug why this is.
-#   At that moment you use
-#   raise DatabaseError from original_exception
-
-
 
 
 # 4_ Как создавать свои классы исключений
@@ -208,7 +207,6 @@ except Exception:
 #   1. Наследоваться можно только от класса Exception
 #   2. Если необходима целая иерархия собственных исключений, то базовый класс
 #       наследуется от Exception, а далее классы наследуются от базового.
-
 
 # 4_2 Исключение без параметров
 class MyCustomException(Exception):
@@ -218,7 +216,6 @@ class MyCustomException(Exception):
 try:
     some_val = 2 + 2
     if some_val == 4:
-        # raise - оператор вызова исключения
         raise MyCustomException("custom message text from raise")
 except MyCustomException:
     print('MyCustomException is called')
@@ -242,55 +239,4 @@ class CustomError(MyProjectError):
         self.foo = kwargs.get('foo')
 # To raise such exception with an extra argument you can use:
 # raise CustomError('Something bad happened', foo='foo')
-
-
-
-
-# 5_ Использование вложенных блоков try и поиск обработчика исключений
-"""
-При возникновении исключения интерпретатор начнет поиск обработчика в собственном
-  блоке try (при наличии), а так же в блоках try выше по вложенности. Пока не дойдет до
-  стандартного, в котором просто произойдет raise исключения.
-"""
-try: # level 1
-    try: # level 2
-        try: # level 3
-            3 / 0
-            try: # level 4
-                logging.info('do something in 4th lvl')
-            except:
-                pass
-            else:
-                logging.info('4th lvl works good!')
-            finally:
-                logging.info('4th level is ended')
-        except KeyError:
-            pass
-        finally:
-            logging.info('3rd level is ended')
-    except IndexError:
-        pass
-    finally:
-        logging.info('2nd level is ended')
-except ZeroDivisionError:
-    logging.exception('someone tried divide by zero')
-else:
-    logging.info('log from 1st lvl else')
-finally:
-    logging.info('1st level is ended')
-# Вывод:
-# (root) 2021-04-03 11:25:58,556: <INFO> - 3rd level is ended
-# (root) 2021-04-03 11:25:58,556: <INFO> - 2nd level is ended
-# (root) 2021-04-03 11:25:58,556: <ERROR> - someone tried divide by zero
-# Traceback (most recent call last):
-#   File "d:\Programming\Python\projects\python_notes\exceptions_notes.py",
-#     line 256, in <module>
-#     3 / 0
-# ZeroDivisionError: division by zero
-# (root) 2021-04-03 11:25:58,556: <INFO> - 1st level is ended
-
-"""
-Уровень 4 не выполнился. Так как ошибка произошла на уровне 3
-"""
-# Ну и лишним не будет добавить что такую вложенность делать не стоит.
 
